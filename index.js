@@ -17,7 +17,7 @@ app.use(
   sessions({
     secret: "test123OKE",
     saveUninitialized: true,
-    cookie: { maxAge: oneDay, secure: true },
+    cookie: { maxAge: oneDay },
     resave: false,
   })
 );

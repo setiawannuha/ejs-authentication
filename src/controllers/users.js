@@ -4,13 +4,20 @@ module.exports = {
     res.render("auth/login.ejs");
   },
   loginAuth: (req, res) => {
+    let session = req.session;
     usersModel
       .checkUsername(req.body.username)
       .then((result) => {
+        session.userId = result.rows[0].id;
         if (req.body.role) {
-          res.redirect("/choose-role");
+          res.redirect(`/choose-role`);
         } else {
-          // role by databse
+          session.role = result.rows[0].role;
+          if (result.rows[0].role == 1) {
+            res.redirect("/admin");
+          } else if (result.rows[0].role == 0) {
+            res.redirect("/guest");
+          }
         }
       })
       .catch((err) => {
@@ -20,10 +27,21 @@ module.exports = {
   chooseRolePage: (req, res) => {
     res.render("auth/choose_role.ejs");
   },
+  chooseRole: (req, res) => {
+    let session = req.session;
+    session.role = parseInt(req.body.role);
+    if (req.body.role == 1) {
+      res.redirect("/admin");
+    } else if (req.body.role == 0) {
+      res.redirect("/guest");
+    }
+  },
   adminPage: (req, res) => {
+    console.log(req.session);
     res.render("users/admin.ejs");
   },
   guestPage: (req, res) => {
+    console.log(req.session);
     res.render("users/guest.ejs");
   },
 };
